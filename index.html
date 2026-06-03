@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>**Scots Criminal Law**</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --accent: #e8d5b0;
+    --accent2: #c9a96e;
+    --text: #f0ece4;
+    --muted: #7a7870;
+    --border: rgba(232,213,176,0.12);
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    /* fluid slide dimensions — never exceed the viewport */
+    --slide-w: min(900px, 100vw);
+    --slide-h: min(540px, calc(var(--slide-w) * 0.6));
+    --slide-pad-h: clamp(1rem, 4vw, 3.5rem);
+    --slide-pad-v: clamp(0.75rem, 3vw, 2rem);
+  }
+
+  html {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+    overscroll-behavior: none;
+  }
+
+  /* ── Top bar ── */
+  #topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(0.75rem, 3vw, 2rem);
+    height: 48px;
+    min-height: 48px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--surface);
+    gap: 0.5rem;
+  }
+  #doc-title {
+    font-family: var(--font-body);
+    font-size: clamp(10px, 2vw, 13px);
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1;
+  }
+  #counter {
+    font-size: clamp(10px, 2vw, 13px);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  #progress-bar {
+    position: absolute;
+    top: 47px;
+    left: 0;
+    height: 2px;
+    background: var(--accent2);
+    transition: width 0.4s var(--ease);
+    z-index: 10;
+  }
+
+  /* ── Main stage ── */
+  #stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: clamp(0px, 2vw, 2rem);
+    min-height: 0;
+  }
+
+  /* ── Slide viewport ── */
+  #viewport {
+    width: var(--slide-w);
+    height: var(--slide-h);
+    position: relative;
+    overflow: hidden;
+    border-radius: clamp(0px, 2vw, 12px);
+    box-shadow: 0 16px 60px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
+    max-width: 100%;
+    max-height: 100%;
+    flex-shrink: 0;
+  }
+
+  /* ── Slide base ── */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+    transform: translateX(60px);
+    padding: var(--slide-pad-v) var(--slide-pad-h);
+    overflow: hidden;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+    z-index: 2;
+  }
+  .slide.exit-left {
+    opacity: 0;
+    transform: translateX(-60px);
+    z-index: 1;
+  }
+
+  /* ── Title slide ── */
+  .title-slide {
+    background: var(--surface);
+    justify-content: flex-end;
+    padding-bottom: clamp(1.5rem, 4vw, 3.5rem);
+  }
+  .title-slide::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .title-slide::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(180deg, var(--accent2) 0%, transparent 100%);
+  }
+  .title-content { position: relative; z-index: 1; }
+  .title-eyebrow {
+    font-size: clamp(9px, 1.5vw, 11px);
+    font-weight: 500;
+    color: var(--accent2);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .title-main {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 4.5vw, 48px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    max-width: 85%;
+  }
+  .title-sub {
+    font-size: clamp(11px, 1.8vw, 15px);
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 70%;
+  }
+  .title-meta {
+    position: absolute;
+    bottom: -2rem; right: 0;
+    font-size: clamp(9px, 1.4vw, 11px);
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Content slide ── */
+  .content-slide {
+    background: var(--surface);
+    justify-content: flex-start;
+    padding-top: var(--slide-pad-v);
+  }
+  .content-slide::before {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,213,176,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .slide-title {
+    font-family: var(--font-display);
+    font-size: clamp(13px, 2.8vw, 22px);
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    line-height: 1.2;
+    flex-shrink: 0;
+  }
+  .slide-title::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 40px; height: 2px;
+    background: var(--accent2);
+  }
+
+  .slide-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: clamp(10px, 1.55vw, 13px);
+    padding-right: 2px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .slide-body::-webkit-scrollbar { width: 3px; }
+  .slide-body::-webkit-scrollbar-track { background: transparent; }
+  .slide-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .slide-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 0;
+  }
+  .slide-bullet {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 1em;
+    line-height: 1.45;
+    color: var(--text);
+    font-weight: 300;
+    padding: 4px 8px;
+    border-radius: 5px;
+    background: var(--surface2);
+    border-left: 2px solid var(--accent2);
+  }
+
+  .slide-para {
+    font-size: 0.95em;
+    line-height: 1.55;
+    color: rgba(240,236,228,0.85);
+    font-weight: 300;
+    margin: 3px 0;
+  }
+
+  .slide-subheading {
+    font-family: var(--font-display);
+    font-size: clamp(11px, 1.8vw, 14px);
+    color: var(--accent);
+    font-weight: 400;
+    margin: 6px 0 3px;
+  }
+
+  .slide-quote {
+    border-left: 3px solid var(--accent2);
+    padding: 8px 12px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(11px, 1.8vw, 14px);
+    color: var(--accent);
+    background: rgba(201,169,110,0.05);
+    border-radius: 0 5px 5px 0;
+    margin: 4px 0;
+  }
+
+  .slide-code {
+    background: #0a0a0c;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-family: var(--font-mono);
+    font-size: clamp(9px, 1.4vw, 12px);
+    color: #a8c4a2;
+    overflow-x: auto;
+    margin: 4px 0;
+    line-height: 1.5;
+  }
+
+  /* ── Desktop nav arrows (hidden on mobile) ── */
+  .nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(32px, 5vw, 40px);
+    height: clamp(32px, 5vw, 40px);
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: clamp(14px, 2.5vw, 18px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+    z-index: 5;
+  }
+  .nav-btn:hover { background: var(--accent2); color: var(--bg); transform: translateY(-50%) scale(1.05); }
+  .nav-btn:disabled { opacity: 0.2; pointer-events: none; }
+  #prev-btn { left: clamp(-44px, -5.5vw, -56px); }
+  #next-btn { right: clamp(-44px, -5.5vw, -56px); }
+
+  @media (max-width: 520px) {
+    .nav-btn { display: none; }
+    #stage { padding: 0; }
+    #viewport { border-radius: 0; box-shadow: none; }
+    #thumbs-btn { bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+    #thumbs-panel { bottom: calc(128px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  /* ── Mobile bottom nav bar ── */
+  #mobile-nav {
+    display: none;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    height: 56px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    gap: 8px;
+  }
+  @media (max-width: 520px) {
+    #mobile-nav { display: flex; }
+  }
+
+  .mob-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 16px;
+    height: 40px;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
+    min-width: 90px;
+    justify-content: center;
+  }
+  .mob-btn:active { background: var(--accent2); color: var(--bg); }
+  .mob-btn:disabled { opacity: 0.25; pointer-events: none; }
+
+  #mob-counter {
+    font-size: 13px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    text-align: center;
+    flex: 1;
+  }
+
+  /* ── Thumbnails panel ── */
+  #thumbs-btn {
+    position: fixed;
+    bottom: 20px; right: 16px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    transition: background 0.2s, color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #thumbs-btn:hover { background: var(--accent2); color: var(--bg); }
+
+  #thumbs-panel {
+    position: fixed;
+    bottom: 70px; right: 12px;
+    width: min(200px, calc(100vw - 24px));
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 49;
+    max-height: 55vh;
+    overflow-y: auto;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    -webkit-overflow-scrolling: touch;
+  }
+  #thumbs-panel.open { display: flex; }
+  .thumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+    min-height: 36px;
+  }
+  .thumb:hover, .thumb:active { background: var(--surface2); }
+  .thumb.active { border-color: var(--accent2); background: var(--surface2); }
+  .thumb-num { font-size: 11px; color: var(--muted); min-width: 18px; font-variant-numeric: tabular-nums; }
+  .thumb-title { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+
+  /* ── Speaker notes ── */
+  #notes-bar {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 0 clamp(0.75rem, 3vw, 2rem);
+    height: 0;
+    overflow: hidden;
+    transition: height 0.3s var(--ease);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    font-size: clamp(11px, 1.8vw, 13px);
+    color: var(--muted);
+  }
+  #notes-bar.open { height: 40px; }
+
+  /* ── Keyboard hint ── */
+  #hint {
+    position: absolute;
+    bottom: 14px; left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(9px, 1.4vw, 11px);
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    opacity: 0;
+    animation: fadeHint 4s ease forwards;
+    animation-delay: 1s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  @keyframes fadeHint {
+    0%   { opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @media (hover: none) { #hint { display: none; } }
+
+  #thumbs-panel::-webkit-scrollbar { width: 4px; }
+  #thumbs-panel::-webkit-scrollbar-track { background: transparent; }
+  #thumbs-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- <div id="topbar">
+  <span id="doc-title">**Scots Criminal Law**</span>
+  <span id="counter">1 / 67</span>
+</div> -->
+
+<div id="topbar">
+  <span id="doc-title">**Scots Criminal Law**</span>
+  <span id="counter">1 / 67</span>
+  <a href="/scottish-criminal-law/scotland_criminal_law_enhanced.pdf" download id="doc-title">
+    <i class="ti ti-download"></i> Download Lesson Notes
+  </a>
+  <a href="/scottish-criminal-law/criminal_law_revision_solved.pdf" download id="doc-title">
+    <i class="ti ti-download"></i> Download Past Questions &amp; Answers
+  </a>
+</div>
+<div id="progress-bar" style="width: 1.4925%"></div>
+
+<div id="stage">
+  <div id="viewport">
+    
+      <div class="slide title-slide" data-index="0">
+        <div class="title-content">
+          <div class="title-eyebrow">Presentation</div>
+          <h1 class="title-main">**Scots Criminal Law**</h1>
+          <div class="title-sub"><p class="slide-para">A Comprehensive Study Guide</p><p class="slide-para">Chapters 1–20 | Sources, Liability, Defences &amp; Specific Crimes</p></div>
+          <div class="title-meta">Slide 1 of 67</div>
+        </div>
+      </div>
+
+    <div class="slide content-slide" data-index="1">
+      <h2 class="slide-title">**Chapter 1: Sources and Scope of Scots Criminal Law**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="2">
+      <h2 class="slide-title">**1.1–1.2 General Role of Statutes and Common Law**</h2>
+      <div class="slide-body"><p class="slide-para">Scots criminal law is a combination of common law and statutory law. Unlike most modern jurisdictions, Scotland remains uncodified; while a draft criminal code was produced by academics in 2003 and praised by the High Court, it has not been enacted.</p><ul class="slide-list">
+<li class="slide-bullet">Common Law: Many serious crimes — such as murder — and less serious ones — such as breach of the peace — remain rooted in common law. The flexibility of common law allows courts to deal with novel issues responsively, but this breadth sometimes conflicts with the principle of legality, which requires conduct to be clearly defined as criminal in advance.</li>
+<li class="slide-bullet">Statutory Growth: The number of statutory offences is growing, covering both traditional areas (sexual offences) and novel problems arising from technology or social changes (misuse of drugs, computer misuse).</li>
+<li class="slide-bullet">Indictment over Nomenclature: Scots law does not strictly require a specific name (nomen iuris) for a crime; it is sufficient for the conduct to be clearly described in the indictment so the accused understands the charge.</li>
+</ul><p class="slide-para">⚖ Key Case: SW v United Kingdom (1995) 21 EHRR 363</p><p class="slide-para">The European Court of Human Rights confirmed that Article 7 ECHR does not prevent the gradual clarification of rules of criminal liability through judicial interpretation, provided the development is consistent with the essence of the offence and reasonably foreseeable.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="3">
+      <h2 class="slide-title">**1.3–1.4 Institutional and Subsequent Writers**</h2>
+      <div class="slide-body"><p class="slide-para">Because the system is uncodified, the works of specific legal scholars hold significant authority.</p><ul class="slide-list">
+<li class="slide-bullet">David Hume: His Commentaries (1797–1800) are the primary starting point for modern investigation. He systematised a previously unorganised area of law. While institutional and highly authoritative, his views are a statement of law at the time of writing and can be departed from by modern courts if social conditions change (e.g., the removal of the marital exemption in rape).</li>
+<li class="slide-bullet">Other Writers: John Macdonald's Practical Treatise is a long-standing 'vade mecum' for practitioners. Sheriff Gordon's The Criminal Law of Scotland is regarded as a magisterial modern authority used daily in courts.</li>
+<li class="slide-bullet">Court Decisions: Textbooks are secondary to the decisions of the courts. The common law resides in the judgments of the High Court, sheriff courts, and the Sheriff Appeal Court (established in 2015).</li></ul></div>
+    </div>
+
+    <div class="slide content-slide" data-index="4">
+      <h2 class="slide-title">**1.5 The Influence of English and International Sources**</h2>
+      <div class="slide-body"><p class="slide-para">Historically, Scots criminal law was independent of English interpretation because it was not subject to appeal to the House of Lords. However, the UK Supreme Court now scrutinises Scottish law regarding devolution issues and human rights.</p><ul class="slide-list">
+<li class="slide-bullet">UK Supreme Court Scrutiny: The court can review Scottish criminal matters on devolution issues under the Scotland Act 1998 and on human rights compatibility under the Human Rights Act 1998.</li>
+<li class="slide-bullet">Other Jurisdictions: Scottish courts may refer to English, Canadian, or Australian decisions for principled development, particularly when Scottish precedent is limited.</li>
+</ul><p class="slide-para">⚖ Key Case: Cadder v HM Advocate \[2010\] UKSC 43</p><p class="slide-para">The UK Supreme Court held that the Scottish practice of detaining and questioning suspects for up to six hours without access to a lawyer violated Article 6(3)(c) ECHR. This landmark decision forced immediate legislative reform via the Criminal Procedure (Legal Assistance, Detention and Appeals) (Scotland) Act 2010.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="5">
+      <h2 class="slide-title">**1.6 Crimes and Offences**</h2>
+      <div class="slide-body"><p class="slide-para">There is a moral and practical distinction between crimes (acts considered profoundly wrong, like murder) and offences (minor or technical breaches, like parking violations). Statutory and common law often overlap; a common law assault can be &quot;aggravated&quot; by statutory provisions regarding bail or prejudice (racial, religious, or disability-based).</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="6">
+      <h2 class="slide-title">**1.7–1.9 The Declaratory Power**</h2>
+      <div class="slide-body"><p class="slide-para">A unique historical source of Scots law was the declaratory power of the High Court, which allowed it to declare new conduct criminal retrospectively if it was &quot;grossly immoral and mischievous&quot;.</p><ul class="slide-list">
+<li class="slide-bullet">Modern Obsolescence: This power is now effectively rendered redundant by Article 7 ECHR, which prohibits retrospective criminal laws. Courts instead bring novel conduct under existing categories.</li>
+</ul><p class="slide-para">⚖ Key Case: Grant v Allan 1987 JC 71</p><p class="slide-para">The High Court reasserted the declaratory power in the context of an accused who obtained computer data by deception. Though the court was prepared to exercise the power, subsequent legislative development (the Computer Misuse Act 1990) confirmed that new technology-related crimes should be created by Parliament rather than judicial declaration.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="7">
+      <h2 class="slide-title">**1.10 The Human Rights Act and ECHR**</h2>
+      <div class="slide-body"><p class="slide-para">The European Convention on Human Rights was integrated into Scots law via the Scotland Act 1998 and the Human Rights Act 1998. Article 7 requires that criminal law be accessible, intelligible, and foreseeable. Citizens must be able to foresee the legal consequences of their actions.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="8">
+      <h2 class="slide-title">**1.11 Classification of Crimes**</h2>
+      <div class="slide-body"><p class="slide-para">Scots law lacks an officially endorsed classification, but five categories based on the interest protected are widely recognised: crimes against the person; crimes against property; crimes against the state; public order and public morality; and regulatory offences.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="9">
+      <h2 class="slide-title">**1.12–1.15 Territorial and Temporal Scope**</h2>
+      <div class="slide-body"><p class="slide-para">Scots law generally follows the territorial principle. Cross-border jurisdiction may arise if the &quot;main act&quot; was performed in Scotland (Hume's theory) or if the &quot;main effect&quot; was felt in Scotland (Witherington). Common law crimes do not prescribe; they can be prosecuted decades after the event. However, under ECHR Article 6, the accused has a right to trial within a &quot;reasonable time.&quot;</p><p class="slide-para">⚖ Key Case: R v HM Advocate 2002 JC 99</p><p class="slide-para">The High Court held that an accused's right to trial within a reasonable time under Article 6(1) ECHR is a devolution issue. Unreasonable delay without adequate explanation will result in the court dismissing the charges as the continuation of proceedings would constitute a breach of the accused's Convention rights.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="10">
+      <h2 class="slide-title">**Chapter 2: Actus Reus, Mens Rea and Criminal Liability**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="11">
+      <h2 class="slide-title">**2.1–2.2 The Actus Reus Requirement**</h2>
+      <div class="slide-body"><p class="slide-para">The law does not punish mere intentions; there must be an overt action or a failure to act. Crimes are distinguished between conduct crimes (a single event, e.g., assault) and result crimes (a series of actions followed by a specific consequence, e.g., murder requires both physical harm and the victim's death).</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="12">
+      <h2 class="slide-title">**2.3–2.9 The Voluntary Act Requirement**</h2>
+      <div class="slide-body"><p class="slide-para">For an actus reus to exist, the act must be voluntary, meaning it is performed under the control of the actor. Several circumstances negative voluntariness:</p><ul class="slide-list">
+<li class="slide-bullet">External Forces: An external event causing the state of affairs negates liability (Hogg v Macpherson — vehicle blown into lamp post by a gale).</li>
+<li class="slide-bullet">Reflex Actions: Movements not willed by the actor do not attract liability, though subsequent blows after a spontaneous reaction are culpable (Jessop v Johnstone).</li>
+<li class="slide-bullet">Automatism: Acts performed in a state of unconsciousness. Somnambulism is recognised as an involuntary act (Simon Fraser), though it may be treated as &quot;insane automatism&quot; if it stems from an internal disease of the mind (Burgess).</li>
+</ul><p class="slide-para">⚖ Key Case: Ross v HM Advocate 1991 JC 210</p><p class="slide-para">The High Court established the defence of non-insane automatism where an external factor — not attributable to the accused — caused a total alienation of reason. The accused had unwittingly consumed LSD placed in his drink. Lord Justice-General Hope held that where the external factor was not self-induced and was not reasonably foreseeable, and resulted in a total loss of control, the accused was entitled to acquittal.</p><p class="slide-para">⚖ Key Case: Sorley v HM Advocate 1992 SCCR 396</p><p class="slide-para">Confirmed the three-part test for the defence of non-insane automatism: (1) the accused must have been affected by an external factor; (2) that factor must have been unforeseeable; and (3) it must have resulted in a total alienation of reason and loss of self-control. All three conditions must be satisfied cumulatively.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="13">
+      <h2 class="slide-title">**2.10–2.15 Omissions**</h2>
+      <div class="slide-body"><p class="slide-para">Liability for a failure to act is restricted to specific circumstances since omissions are generally seen as having less causative potency than positive acts.</p><ul class="slide-list">
+<li class="slide-bullet">No General Duty: There is generally no common law duty to prevent a crime. Merely watching a crime occur does not make one &quot;art and part&quot; guilty (George Kerr).</li>
+<li class="slide-bullet">Presence and Encouragement: Liability may arise if mere presence amounts to encouragement of illegality (Wilcox v Jeffrey) or if a person in authority fails to intervene (Hogg v McLeod).</li>
+<li class="slide-bullet">Close Relationships: A duty is often inferred between parents and minor children, or members of the same household, based on the dependence inherent in the relationship.</li>
+<li class="slide-bullet">Contractual Obligations: A person may be criminally liable for death resulting from failure to perform contractual duties (e.g., a child-minder failing to watch a child).</li></ul></div>
+    </div>
+
+    <div class="slide content-slide" data-index="14">
+      <h2 class="slide-title">**2.16–2.21 Mens Rea and Motive**</h2>
+      <div class="slide-body"><p class="slide-para">Except in strict liability cases, the prosecution must prove the accused acted with a culpable state of mind. While mens rea is the modern term, older Scots law used &quot;dole,&quot; defined by Hume as &quot;corrupt and evil intention.&quot; Motive is generally irrelevant to guilt but may be relevant in sentencing mitigation or in determining justificatory defences.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="15">
+      <h2 class="slide-title">**2.22–2.26 The Constituent Elements of Mens Rea**</h2>
+      <div class="slide-body"><ul class="slide-list"><li class="slide-bullet">Intention: Acting with a view to bringing about a specific result. Wilfulness in statutes is often synonymous with intentional conduct.</li>
+<li class="slide-bullet">Knowledge and Wilful Blindness: Deliberately refraining from finding the truth is legally equivalent to knowledge (Latta v Herron).</li>
+<li class="slide-bullet">Recklessness: An objective test in Scots law — acting with utter disregard for consequences where a reasonable person would have seen the risk (Gizzi v Tudhope).</li>
+<li class="slide-bullet">Negligence: Criminal liability usually requires gross negligence — an extreme departure from the standard of a reasonably competent person (Paton v HM Advocate).</li>
+</ul><p class="slide-para">⚖ Key Case: Brennan v HM Advocate 1977 JC 38</p><p class="slide-para">The High Court held that self-induced intoxication does not provide a defence to a charge of murder in Scots law. Where the accused voluntarily consumed alcohol or drugs to such a degree as to render himself incapable of forming criminal intent, that prior recklessness in self-intoxication satisfies the mens rea requirement as a continuing element of the offence.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="16">
+      <h2 class="slide-title">**Chapter 3: Strict Liability**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="17">
+      <h2 class="slide-title">**3.1–3.2 The Presumption in Favour of Mens Rea**</h2>
+      <div class="slide-body"><p class="slide-para">Although many statutory offences do not explicitly mention a mental element, Scots law operates under a strong presumption in favour of mens rea. It is assumed that Parliament does not intend to criminalise people who are in no way blameworthy.</p><p class="slide-para">⚖ Key Case: Duguid v Fraser 1942 JC 1</p><p class="slide-para">The court held that the Crown must prove the statute's language and scope expressly or by necessary implication require an exception to the &quot;salutary rule&quot; that mens rea is indispensable. This case established the foundation for the Scottish presumption in favour of mens rea for statutory offences.</p><p class="slide-para">⚖ Key Case: Sweet v Parsley \[1970\] AC 132</p><p class="slide-para">The House of Lords (persuasive in Scotland) held that the court should lean against a construction of a criminal statute that imposes strict liability without clear words or necessary implication. Lord Reid's judgment is regarded as a leading statement of the presumption of mens rea across UK jurisdictions.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="18">
+      <h2 class="slide-title">**3.3 Words Implying Mens Rea**</h2>
+      <div class="slide-body"><p class="slide-para">The presence of specific trigger words in a statute indicates that the legislature intended to require proof of a mental state: &quot;wilfully&quot; (deliberate intentional act); &quot;knowingly&quot; (awareness of material facts); and &quot;fraudulently&quot; or &quot;maliciously&quot; also import mens rea requirements.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="19">
+      <h2 class="slide-title">**3.4–3.6 Where the Statute is Silent**</h2>
+      <div class="slide-body"><p class="slide-para">When a statute is silent, courts evaluate four factors to decide if the presumption should be rebutted:</p><ul class="slide-list">
+<li class="slide-bullet">Regulatory Nature: Strict liability is often a &quot;necessary evil&quot; for public safety in areas like traffic, pollution, and trading (Alphacell v Woodward — company convicted of river pollution despite no knowledge or negligence).</li>
+<li class="slide-bullet">&quot;Real Crime&quot; vs Quasi-Crime: &quot;Real crimes&quot; with moral opprobrium generally require mens rea; regulatory quasi-crimes do not. However, even the high stigma of a firearms conviction did not prevent a strict liability approach being taken (Smith v HM Advocate).</li>
+<li class="slide-bullet">Could the Accused Have Done Otherwise?: Courts sometimes acknowledge that punishing someone who could not have avoided the act is pointless (Empress Car Co).</li>
+<li class="slide-bullet">Effectiveness Argument: If a provision can only be given effect by dispensing with mens rea, courts are more likely to interpret it as strict liability.</li></ul></div>
+    </div>
+
+    <div class="slide content-slide" data-index="20">
+      <h2 class="slide-title">**3.7–3.10 Defences, Vicarious and Due Diligence**</h2>
+      <div class="slide-body"><p class="slide-para">Common law defences (insanity, automatism, nonage, necessity, self-defence) remain available in strict liability cases. Many modern statutes include a built-in &quot;due diligence&quot; defence.</p><p class="slide-para">⚖ Key Case: Ahmed v MacDonald 1995 SCCR 740</p><p class="slide-para">An owner successfully invoked the due diligence defence to avoid liability for allowing underage customers into a licensed premises. The court accepted that employing a doorman and regularly briefing staff on age-verification procedures constituted &quot;all due diligence&quot; to prevent the contravention.</p><p class="slide-para">⚖ Key Case: First Quench Retailing Ltd v MacLeod 2003 JC 16</p><p class="slide-para">The High Court refused the due diligence defence where the employer had a training scheme but did not effectively monitor or supervise it. Merely establishing a paper system is insufficient; the employer must demonstrate active and effective implementation.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="21">
+      <h2 class="slide-title">**Chapter 4: Corporate Criminal Liability**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="22">
+      <h2 class="slide-title">**4.1–4.3 Rationale and Who May Be Liable**</h2>
+      <div class="slide-body"><p class="slide-para">Crime frequently occurs within the context of companies. While individuals within companies can be personally charged, doing so can obscure the true actor — the company itself — and may allow those who profited from the crime to escape while minor officials take the blame. The law now treats companies similarly to human actors; they have a collective sense of purpose and respond to sanctions, threats, and negative publicity.</p><p class="slide-para">Specific procedures exist to prosecute bodies corporate on indictment, and various entities — including partnerships, associations, and bodies of trustees — on summary complaint. The Partnerships (Prosecution) (Scotland) Act 2013 allows a partnership to be prosecuted up to five years after dissolution.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="23">
+      <h2 class="slide-title">**4.4–4.7 Statutory Offences**</h2>
+      <div class="slide-body"><ul class="slide-list"><li class="slide-bullet">Strict Liability: Companies are easily held liable through vicarious liability. Instructions must be express and specific to remove an act from the scope of employment.</li>
+<li class="slide-bullet">Offences Requiring Mens Rea: The knowledge of managers or controllers can be imputed to the company if responsibility for that area has been delegated to them. Knowledge held by a junior employee with no power to change practices is typically insufficient.</li>
+<li class="slide-bullet">Common Law Offences: Liability is established using the &quot;controlling mind&quot; fiction — directors and managers represent the &quot;brain and nerve centre&quot; of the company.</li>
+</ul><p class="slide-para">⚖ Key Case: Tesco Supermarkets Ltd v Nattrass \[1972\] AC 153</p><p class="slide-para">The House of Lords held that for a company to rely on the &quot;act or default of another person&quot; defence, it must identify the &quot;controlling mind and will&quot; of the company. This is confined to the board of directors, managing director, and those to whom the board have delegated full discretionary authority. A branch manager was held not to constitute the controlling mind.</p><p class="slide-para">⚖ Key Case: Transco plc v HM Advocate 2004 JC 29</p><p class="slide-para">The High Court of Justiciary held that corporate criminal liability for common law culpable homicide requires an identifiable human agent whose acts and mens rea can be attributed to the company. Knowledge and fault cannot be &quot;aggregated&quot; across different employees — a single directing mind must be responsible for both the actus reus and the guilty state of mind.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="24">
+      <h2 class="slide-title">**4.8 Corporate Homicide Act 2007**</h2>
+      <div class="slide-body"><p class="slide-para">Following Transco, Parliament enacted the Corporate Manslaughter and Corporate Homicide Act 2007 to introduce the crime of corporate homicide in Scotland. An organisation is liable where there is a gross failing in its management of health and safety that results in death. Guilt only arises if the failing by &quot;senior management&quot; was a substantial element in the breach. If convicted, a company faces an unlimited fine.</p><p class="slide-para">⚖ Key Case: R v Cotswold Geotechnical Holdings Ltd \[2011\] EWCA Crim 1337</p><p class="slide-para">The first conviction under the Corporate Manslaughter and Corporate Homicide Act 2007. The court confirmed that the &quot;senior management&quot; test requires examining whether the failures of those making significant decisions on behalf of the organisation as a whole substantially contributed to the gross breach. The company was fined £385,000.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="25">
+      <h2 class="slide-title">**Chapter 5: Causation**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="26">
+      <h2 class="slide-title">**5.1 The Causal Link Requirement**</h2>
+      <div class="slide-body"><p class="slide-para">Without a satisfactory causal link between the accused's act and the resulting criminal event, the result cannot be attributed to the accused. The prosecution must prove both factual causation (but-for test) and legal causation (that no novus actus interveniens breaks the chain).</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="27">
+      <h2 class="slide-title">**5.2 The But-For Test**</h2>
+      <div class="slide-body"><p class="slide-para">The starting point is the &quot;but-for&quot; test: but for the accused's act, would the result have occurred? If the answer is no, factual causation is established. However, this test is insufficient on its own — it must be supplemented by principles of legal causation.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="28">
+      <h2 class="slide-title">**5.3 Novus Actus Interveniens**</h2>
+      <div class="slide-body"><p class="slide-para">A novus actus interveniens (new intervening act) by a third party or the victim may break the chain of causation and relieve the accused of liability. Whether an intervening act breaks the chain depends on whether it was a free, deliberate and informed act, and whether it was reasonably foreseeable.</p><p class="slide-para">⚖ Key Case: McKinnon v HM Advocate 2003 JC 29</p><p class="slide-para">The High Court confirmed that the thin skull (or &quot;egg-shell skull&quot;) rule applies in Scots criminal law: the accused must take their victim as they find them. If the victim's particular vulnerability makes the consequences more serious than they would be for an ordinary person, the accused is nonetheless fully liable for those consequences.</p><p class="slide-para">⚖ Key Case: HM Advocate v Purcell 2008 JC 131</p><p class="slide-para">The High Court held that where a victim dies after refusing medical treatment following an assault, this does not break the chain of causation unless the refusal was &quot;so unreasonable and so extreme&quot; as to constitute a free and deliberate act sufficient to sever the accused's responsibility. Ordinary refusal does not constitute a novus actus.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="29">
+      <h2 class="slide-title">**Chapters 6–8: General Defences**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="30">
+      <h2 class="slide-title">**Insanity and Mental Disorder**</h2>
+      <div class="slide-body"><p class="slide-para">The special defence of insanity in bar of trial, or insanity as a substantive defence, arises where the accused, by reason of mental disorder, was unable to appreciate the nature or wrongfulness of their conduct at the time of the offence. A successful plea results in a special verdict of &quot;not guilty by reason of insanity,&quot; after which the court may make a compulsion order.</p><p class="slide-para">⚖ Key Case: HM Advocate v Kidd 1960 JC 61</p><p class="slide-para">The High Court confirmed the test for the insanity defence in Scots law: the accused must have been, at the time of the act, suffering from such a total alienation of reason — arising from mental disease — as to render them unable to know the nature of the act or that it was wrong. This remains the leading Scottish authority on the insanity defence.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="31">
+      <h2 class="slide-title">**Self-Defence**</h2>
+      <div class="slide-body"><p class="slide-para">Self-defence is a complete defence to assault and murder where the accused was under imminent threat of serious violence and responded with proportionate and necessary force. The three requirements are: (1) imminent danger to life or serious injury; (2) no means of escape; and (3) the response was proportionate to the threat.</p><p class="slide-para">⚖ Key Case: Owens v HM Advocate 1946 JC 119</p><p class="slide-para">The High Court held that self-defence is not available where the accused had an opportunity to escape the threat without fighting. The defence requires that the accused was in genuine and imminent danger and had no reasonable alternative but to resort to force. The reasonableness of the accused's belief in the necessity of self-defence is assessed objectively.</p><p class="slide-para">⚖ Key Case: McCluskey v HM Advocate 1959 JC 39</p><p class="slide-para">Confirmed that the force used in self-defence must be proportionate to the threat faced. Using lethal force in response to a minor threat will not qualify as self-defence. The jury must consider whether the force used was reasonable in all the circumstances as the accused believed them to be.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="32">
+      <h2 class="slide-title">**Necessity and Coercion**</h2>
+      <div class="slide-body"><p class="slide-para">Necessity (or coercion) is available where the accused acted under immediate threats of death or serious bodily harm which they could not reasonably resist. Coercion requires: (1) immediate danger to life; (2) that the accused had no opportunity to avoid it; and (3) that the accused did not voluntarily associate with those making the threats. The defence is not available to murder.</p><p class="slide-para">⚖ Key Case: Thomson v HM Advocate 1983 JC 69</p><p class="slide-para">The High Court confirmed that the defence of coercion in Scots law requires: (1) that the threats were of immediate death or serious injury; (2) that the threats were directed at the accused personally; and (3) that the accused had no reasonable opportunity to escape from the threatened danger. The court emphasised that the defence is restricted and not available for the most serious offences.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="33">
+      <h2 class="slide-title">**Intoxication**</h2>
+      <div class="slide-body"><p class="slide-para">Self-induced intoxication is not a defence to criminal charges in Scots law. The prior recklessness of becoming voluntarily intoxicated satisfies the mens rea requirement as a continuing element. However, involuntary intoxication — where an external factor not attributable to the accused causes total alienation of reason — may ground the defence of non-insane automatism established in Ross v HM Advocate (above).</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="34">
+      <h2 class="slide-title">**Chapter 9: Inchoate Offences — Attempt, Conspiracy and Incitement**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="35">
+      <h2 class="slide-title">**Attempt**</h2>
+      <div class="slide-body"><p class="slide-para">An attempt to commit a crime is itself a crime in Scots law. The act must have gone beyond &quot;mere preparation&quot; and crossed into &quot;perpetration&quot; — the accused must have embarked upon the commission of the crime itself.</p><p class="slide-para">⚖ Key Case: HM Advocate v Camerons 1911 JC 110</p><p class="slide-para">The High Court drew the fundamental distinction between acts of mere preparation and acts of perpetration in the context of criminal attempt. The accused must have moved beyond preparatory steps and begun to execute the criminal purpose. This remains the leading Scottish authority on what constitutes a criminal attempt.</p><p class="slide-para">⚖ Key Case: Docherty v Brown 1996 JC 48</p><p class="slide-para">The High Court confirmed that attempting to do something that is not in fact a crime does not constitute an attempt in Scots law (the issue of &quot;impossible attempts&quot;). However, where the facts would have constituted an offence had they been as the accused believed, an attempt may still be charged — a &quot;factually impossible&quot; attempt is sufficient.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="36">
+      <h2 class="slide-title">**Conspiracy**</h2>
+      <div class="slide-body"><p class="slide-para">Conspiracy is an agreement between two or more persons to commit a criminal act or to achieve a lawful purpose by unlawful means. In Scots law, the agreement itself — without any further overt act — is sufficient to constitute the offence.</p><p class="slide-para">⚖ Key Case: Maxwell v HM Advocate 1980 JC 40</p><p class="slide-para">The High Court confirmed the definition of conspiracy in Scots law: an agreement between two or more parties to commit a criminal act or to use criminal means to achieve an end. The offence is committed once the agreement is formed, regardless of whether the intended crime is carried out or indeed whether it would be possible to carry it out.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="37">
+      <h2 class="slide-title">**Art and Part Liability (Complicity)**</h2>
+      <div class="slide-body"><p class="slide-para">Where two or more persons act in concert to commit a crime, each is equally responsible for all acts done in furtherance of the common criminal purpose, even those carried out solely by another participant — provided those acts were within the scope of the common plan or were a foreseeable consequence of it.</p><p class="slide-para">⚖ Key Case: McKinnon v HM Advocate 2004 SCCR 323</p><p class="slide-para">The High Court held that art and part liability requires that all participants shared a common criminal purpose and that the act charged was within the scope of that purpose or was a foreseeable consequence of it. A participant who genuinely withdraws before the crime is committed may escape liability, provided the withdrawal is timely and communicated clearly.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="38">
+      <h2 class="slide-title">**Chapters 10–12: Crimes Against the Person**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="39">
+      <h2 class="slide-title">**Murder**</h2>
+      <div class="slide-body"><p class="slide-para">Murder is defined in Scots law as the unlawful killing of another with &quot;wicked intention to kill&quot; or &quot;wicked recklessness&quot; — an utter disregard for the consequences to human life. There is no distinction between first and second degree murder. The mandatory sentence upon conviction is life imprisonment.</p><p class="slide-para">⚖ Key Case: HM Advocate v Drury 2001 SCCR 538</p><p class="slide-para">The High Court held that the mental element of murder — wicked recklessness — requires an utter disregard for the consequences to human life such that the accused could only be regarded as wickedly reckless. Lord Justice-General Rodger's opinion is the leading modern statement of the mens rea of murder in Scots law and redefined the relationship between wicked intention and wicked recklessness.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="40">
+      <h2 class="slide-title">**Culpable Homicide**</h2>
+      <div class="slide-body"><p class="slide-para">Culpable homicide is an unlawful killing that falls short of murder because either: (1) the accused lacked the wicked intent or wicked recklessness required for murder (lawful act homicide, or killing under provocation, diminished responsibility, or excessive self-defence); or (2) the killing was the result of an unlawful act carried out without wicked recklessness (unlawful act homicide).</p><p class="slide-para">⚖ Key Case: Galbraith v HM Advocate 2001 SCCR 551</p><p class="slide-para">The High Court confirmed that diminished responsibility is a special defence in Scots law which, if successful, reduces a charge of murder to culpable homicide. The court adopted the test that the accused's abnormality of mind must have substantially impaired their ability to determine or control their actions. This reformulation of the test aligned Scots law more closely with modern psychiatric understanding.</p><p class="slide-para">⚖ Key Case: HM Advocate v McKean 1996 SCCR 402</p><p class="slide-para">The High Court confirmed that provocation operates as a partial defence in Scots law, reducing murder to culpable homicide. For the defence to succeed: (1) there must have been a genuinely provocative act; (2) the accused must have lost self-control as a result; and (3) there must be a proportionate relationship between the provocation and the response. &quot;Mere words&quot; can constitute provocation in Scots law.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="41">
+      <h2 class="slide-title">**Assault**</h2>
+      <div class="slide-body"><p class="slide-para">Assault in Scots law is an intentional attack upon the person of another — any deliberate application of force, however slight, or an act done with &quot;evil intent&quot; that places the victim in reasonable apprehension of immediate physical harm. There is no requirement that the victim actually suffers injury. The mens rea requirement is one of &quot;evil intent&quot; — an intent to assault — and recklessness does not suffice.</p><p class="slide-para">⚖ Key Case: Atkinson v HM Advocate 1987 SCCR 534</p><p class="slide-para">The High Court confirmed that the assault must be intentional — recklessness as to whether a person is struck is insufficient to constitute assault in Scots law. This distinguishes Scots law from English law and means that reckless conduct causing injury should be charged as culpable and reckless conduct, not assault.</p><p class="slide-para">⚖ Key Case: Smart v HM Advocate 1975 JC 30</p><p class="slide-para">The court confirmed that consent is not a defence to assault beyond the confines of regulated sporting activities. The accused cannot argue that the victim consented to being struck in an unlawful public fight (a &quot;square go&quot;). Public policy considerations override the principle of consensual violence.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="42">
+      <h2 class="slide-title">**Sexual Offences — Rape and Sexual Assault**</h2>
+      <div class="slide-body"><p class="slide-para">The Sexual Offences (Scotland) Act 2009 fundamentally restated and codified the law of sexual offences. Rape is defined as penetration of the vagina, anus, or mouth with a penis, without reasonable belief in consent. A statutory definition of consent was introduced: a person consents if they agree by choice and have the freedom and capacity to make that choice.</p><p class="slide-para">⚖ Key Case: Lord Advocate's Reference (No 1 of 2001) 2002 SCCR 435</p><p class="slide-para">This important reference prior to the 2009 Act confirmed that under the existing common law, the absence of consent was the essence of rape and that the accused's reasonable belief in consent could operate as a defence. This reference helped shape the eventual legislative reform encapsulated in the Sexual Offences (Scotland) Act 2009.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="43">
+      <h2 class="slide-title">**Chapters 13–15: Crimes Against Property**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="44">
+      <h2 class="slide-title">**Theft**</h2>
+      <div class="slide-body"><p class="slide-para">Theft in Scots law is the appropriation of property belonging to another with the intention of depriving them of it, temporarily or permanently, and without their consent. The nomen iuris of theft applies regardless of whether the deprivation is temporary or permanent — unlike English law, there is no requirement for an intention to permanently deprive.</p><p class="slide-para">⚖ Key Case: Cornelius v HM Advocate 2002 SCCR 288</p><p class="slide-para">The High Court confirmed that the appropriation of property with the intention of temporarily depriving the owner of it can constitute theft in Scots law. This distinguishes the Scottish position from English law and reflects Hume's broad conception of the crime as any unlawful assumption of possession.</p><p class="slide-para">⚖ Key Case: Milne v Tudhope 1981 JC 53</p><p class="slide-para">The court confirmed the principle of &quot;theftuous taking&quot; — that the accused must intend to appropriate, not merely use, the property. Where the accused took a car for a joyride and genuinely intended to return it, the conviction for theft was nevertheless upheld because temporary deprivation of a significant nature fell within the scope of the offence as understood in Scots law.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="45">
+      <h2 class="slide-title">**Housebreaking and Aggravated Theft**</h2>
+      <div class="slide-body"><p class="slide-para">Housebreaking involves breaking into and entering a building with the intention to commit a crime within. The &quot;breaking&quot; does not require physical force; entering through an open window or picking a lock constitutes breaking in the legal sense. Theft by housebreaking is a more serious charge than simple theft.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="46">
+      <h2 class="slide-title">**Robbery**</h2>
+      <div class="slide-body"><p class="slide-para">Robbery is theft accomplished by the use of personal violence or threats thereof. The key elements are: (1) a taking of property; (2) accompanied by violence or threats; and (3) where the violence or threats are used to overcome resistance or facilitate the taking. The assault is typically subsumed into the robbery charge.</p><p class="slide-para">⚖ Key Case: Gilmour v McGlennan 1993 SCCR 837</p><p class="slide-para">The court upheld a conviction for robbery where the accused used a toy gun. Because the victim was actually placed in fear and alarm by the apparent weapon, the crime was complete. The court did not require proof that a &quot;reasonable person&quot; would have been alarmed — the victim's subjective reaction of genuine fear was sufficient.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="47">
+      <h2 class="slide-title">**Chapters 16–17: Fraud, Embezzlement, Extortion and Bribery**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="48">
+      <h2 class="slide-title">**16.1–16.2 Common Law Fraud**</h2>
+      <div class="slide-body"><p class="slide-para">In Scotland, fraud is primarily a common law offence characterised by dishonest conduct that produces a concrete practical result. The essence of fraud is the conveyance of a false impression to a victim with the deliberate aim of achieving a specific outcome. Unlike some other jurisdictions, Scots law focuses on whether a false pretence was made and whether it caused a practical result — the accused need not gain property nor the victim lose it.</p><p class="slide-para">⚖ Key Case: Adcock v Archibald 1925 JC 58</p><p class="slide-para">The leading case establishing the &quot;definite practical result&quot; test in Scots fraud. The accused was convicted of fraud after providing falsely attributed coal tallies that resulted in a false entry in his employer's book, overstating how much coal he had mined. The court confirmed that the practical result of a fraud need not involve economic loss or personal gain — inducing someone to act in a way they otherwise would not is sufficient.</p><p class="slide-para">⚖ Key Case: Richards v HM Advocate 2009 SCCR 101</p><p class="slide-para">The High Court confirmed that a statement of intention is a statement of fact in the context of fraud — if someone makes a representation of intent they do not actually hold in order to achieve a practical result, that is fraud. The accused had misrepresented their intended use of a property to induce a sale. The court also confirmed that continuing representations can sustain a fraud charge throughout the duration of a transaction.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="49">
+      <h2 class="slide-title">**16.14 Uttering of Forged Documents**</h2>
+      <div class="slide-body"><p class="slide-para">Uttering is the crime of intentionally using a forged document as genuine, towards the prejudice of another. Forgery alone is not a crime in Scots law — the offence is in the uttering. The prosecution must prove intentional uttering with intent to deceive; actual prejudice is not required if the document was accepted as genuine.</p><p class="slide-para">⚖ Key Case: Macdonald v Tudhope 1983 SCCR 341</p><p class="slide-para">Confirmed that the offence of uttering requires proof that the document was uttered with intention to deceive and was &quot;towards the prejudice&quot; of the recipient. Actual prejudice is not required; it is sufficient that the recipient accepted the document as genuine. The case confirmed the wide scope of uttering in Scots law.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="50">
+      <h2 class="slide-title">**17.1–17.5 Embezzlement**</h2>
+      <div class="slide-body"><p class="slide-para">Embezzlement is the dishonest appropriation of property by an individual already in lawful possession of it as a trustee, agent, factor, or administrator, where there exists a duty to account. The critical distinction from theft is that the embezzler has authority to administer the property. Putting a client's funds at risk through unauthorised personal use can constitute appropriation even without actual permanent loss.</p><p class="slide-para">⚖ Key Case: Hamilton v Friel 1994 SCCR 748</p><p class="slide-para">The court confirmed that the actus reus of embezzlement is satisfied where the accused, in a fiduciary position, diverts funds to their own use or places them at personal risk through unauthorised dealing. A failure to account for funds within a reasonable time after demand is sufficient evidence of the necessary appropriation where the embezzler has total control over the property.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="51">
+      <h2 class="slide-title">**17.6–17.8 Extortion**</h2>
+      <div class="slide-body"><p class="slide-para">Extortion (blackmail) involves using threats to coerce a person into affording a benefit they would otherwise have refused. The threat can involve death, injury, property damage, or damage to fortune and reputation. A threat to do something lawful (like eviction or reporting a crime) can be extortion if used to achieve an illegitimate end.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="52">
+      <h2 class="slide-title">**17.10–17.11 Bribery Act 2010**</h2>
+      <div class="slide-body"><p class="slide-para">The Bribery Act 2010 abolished the common law crime and created four statutory offences: bribing another person; being bribed; bribery of a foreign public official; and failure of a commercial organisation to prevent bribery (s.7 — a strict liability corporate offence with an &quot;adequate systems&quot; defence). Significantly, the 2010 Act removed the need to prove a dishonest intention.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="53">
+      <h2 class="slide-title">**Chapter 18: Malicious Mischief, Vandalism and Fire-Raising**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="54">
+      <h2 class="slide-title">**18.1–18.4 Malicious Mischief**</h2>
+      <div class="slide-body"><p class="slide-para">Malicious mischief is the crime of intentionally or recklessly damaging or destroying another person's property without permission, resulting in physical damage or economic (patrimonial) loss. The requirement for public disorder has disappeared. The definition has expanded through case law to include deliberate economic loss.</p><p class="slide-para">⚖ Key Case: Wilson v HM Advocate 1983 SCCR 420</p><p class="slide-para">A disgruntled power station employee pressed an emergency stop button, causing no physical damage but resulting in £147,000 of lost generating capacity. The High Court held that deliberate interference that &quot;sterilises&quot; the functioning of property causing financial loss constitutes malicious mischief — physical damage to the property itself is not required. This established the patrimonial loss extension of the offence.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="55">
+      <h2 class="slide-title">**18.5 Mens Rea of Malicious Mischief**</h2>
+      <div class="slide-body"><p class="slide-para">The mental element is satisfied if the accused shows a &quot;deliberate disregard of, or even indifference to, the property or possessory rights of others.&quot; The Crown must prove the accused knew their conduct would cause damage to another's patrimonial rights and proceeded regardless.</p><p class="slide-para">⚖ Key Case: Ward v Robertson 1938 JC 32</p><p class="slide-para">A conviction for malicious mischief was quashed because there was no evidence the accused knew that walking across a specific field would likely damage the grass. The case established that the mens rea of malicious mischief requires knowledge — actual or inferred — that the conduct would cause patrimonial damage to another.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="56">
+      <h2 class="slide-title">**Vandalism (Statutory Offence)**</h2>
+      <div class="slide-body"><p class="slide-para">Vandalism under s.52 of the Criminal Procedure (Scotland) Act 1995 covers any person who, without reasonable excuse, wilfully or recklessly destroys or damages another's property. The High Court in Black v Allan suggested that vandalism requires a higher standard of recklessness — &quot;conscious and deliberate courting of material risks&quot; — compared to the &quot;deliberate disregard&quot; required for malicious mischief.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="57">
+      <h2 class="slide-title">**18.7–18.11 Fire-Raising**</h2>
+      <div class="slide-body"><ul class="slide-list"><li class="slide-bullet">Wilful Fire-Raising: The accused intended to set fire to a specific item of property. No transferred intent is permitted. In Petto v HMA, starting a major fire in a tenement carried a &quot;virtual certainty&quot; of risk to occupants — accepting this risk is legally equivalent to wilful fire-raising of the building.</li>
+<li class="slide-bullet">Culpable and Reckless Fire-Raising: Property set on fire due to reckless disregard for the consequences. No intent to burn is needed — only high-degree recklessness. Purely accidental fire-raising is not a crime (McCue v Currie).</li>
+</ul><p class="slide-para">⚖ Key Case: Petto v HM Advocate 2011 SCCR 519</p><p class="slide-para">The High Court of Justiciary confirmed that setting a major fire in a tenement building on the ground floor — where the virtual certainty of spread to upper floors and risk to occupants was present — was sufficient to establish wilful fire-raising of the building. The accused's acceptance of the virtual certainty of the risk was legally equiparated to an intention to set fire to the building itself.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="58">
+      <h2 class="slide-title">**Chapter 19: Offences Against the State**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="59">
+      <h2 class="slide-title">**19.1–19.4 Treason and Sedition**</h2>
+      <div class="slide-body"><p class="slide-para">The Scots law of treason is based entirely on English law via the Treason Act 1708. Treason includes compassing the death of the Sovereign (requiring an overt act); levying war against the Sovereign (directly or constructively); and adhering to the Sovereign's enemies in wartime.</p><p class="slide-para">⚖ Key Case: Joyce v DPP \[1946\] AC 347</p><p class="slide-para">The House of Lords confirmed that the allegiance owed to the Crown by an alien extends beyond their physical presence in the UK if they hold a British passport, thereby obtaining Crown protection abroad. &quot;Lord Haw-Haw&quot; (William Joyce) was convicted of treason for broadcasting Nazi propaganda, notwithstanding that he had obtained his British passport by deception.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="60">
+      <h2 class="slide-title">**19.5–19.7 Official Secrets Acts**</h2>
+      <div class="slide-body"><p class="slide-para">The Official Secrets Act 1911, s.1, prohibits being near a prohibited place for a purpose prejudicial to state safety or interests. The test for &quot;prejudicial purpose&quot; is objective — motive is irrelevant (Chandler v DPP). The Official Secrets Act 1989 replaced older provisions, imposing liability on security services members for any communication and on Crown servants only if the disclosure is &quot;damaging.&quot;</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="61">
+      <h2 class="slide-title">**19.8–19.11 Terrorism**</h2>
+      <div class="slide-body"><p class="slide-para">Terrorism legislation has expanded significantly through the Terrorism Acts 2000 and 2006. Key offences include: membership of or support for proscribed organisations; possession of articles giving rise to reasonable suspicion of a connection with terrorism; funding terrorism; and failure to disclose information about suspected terrorist offences.</p><p class="slide-para">⚖ Key Case: Siddique v HM Advocate 2010 JC 166</p><p class="slide-para">The High Court clarified that under s.57 of the Terrorism Act 2000 (possession of articles in connection with terrorism), the Crown must prove that reasonable suspicion of a connection with terrorism relates to a prospective act of terrorism. The mere possession of an article that could theoretically be used in a terrorist act is insufficient without circumstances pointing to future terrorist purpose.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="62">
+      <h2 class="slide-title">**Chapter 20: Offences Against the Administration of Justice**</h2>
+      <div class="slide-body"></div>
+    </div>
+
+    <div class="slide content-slide" data-index="63">
+      <h2 class="slide-title">**20.1–20.2 Perjury and Subornation**</h2>
+      <div class="slide-body"><p class="slide-para">Perjury is the &quot;judicial affirmation of falsehood on oath&quot; — wilfully and unequivocally making a false statement on oath or affirmation in judicial proceedings. The prosecution must prove: (1) the statement was made under a formally administered oath or affirmation; (2) the statement was absolutely false; (3) it was relevant to the proceedings; and (4) the accused intentionally affirmed the falsehood knowing it to be false. Merely proving that an accused swore contradictory statements is insufficient — the Crown must prove specifically which statement was the lie.</p><p class="slide-para">Subornation of perjury involves inducing another to commit perjury. The crime is only complete if the witness actually gives the perjured evidence in court.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="64">
+      <h2 class="slide-title">**20.3–20.6 Contempt of Court**</h2>
+      <div class="slide-body"><p class="slide-para">Contempt is a sui generis offence — punishable but not strictly a &quot;crime.&quot; It consists of conduct that challenges or affronts the authority of the court or the supremacy of the law.</p><ul class="slide-list">
+<li class="slide-bullet">Strict Liability Rule (1981 Act): Publishing material that creates a &quot;substantial risk&quot; of seriously impeding or prejudicing active legal proceedings constitutes contempt regardless of intent. Proceedings become &quot;active&quot; once a suspect is arrested or a warrant is issued.</li>
+<li class="slide-bullet">Murmuring Judges: Criticism of judgments is permissible if within the limits of &quot;reasonable courtesy and good faith.&quot; Personal attacks on judicial character are contempt.</li>
+</ul><p class="slide-para">⚖ Key Case: HM Advocate v Beggs (No 2) 2001 SCCR 879</p><p class="slide-para">The High Court considered the circumstances in which prejudicial media coverage might render a fair trial impossible. The court confirmed that the test for contempt under the Contempt of Court Act 1981 is whether the publication creates a &quot;substantial risk&quot; of serious prejudice to active proceedings, assessed objectively at the time of publication.</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="65">
+      <h2 class="slide-title">**20.7 Making False Reports to Police**</h2>
+      <div class="slide-body"><p class="slide-para">This common law crime involves wasting police time by deliberately making a false report. A specific accusation against an identifiable person is not required — any malicious false statement causing a &quot;fruitless investigation&quot; is sufficient (Bowers v Tudhope).</p></div>
+    </div>
+
+    <div class="slide content-slide" data-index="66">
+      <h2 class="slide-title">**20.8–20.9 Escaping from Custody and Defeating the Ends of Justice**</h2>
+      <div class="slide-body"><p class="slide-para">Prison-breaking is a common law offence committed by escaping from a public prison where lawfully confined; physical force is not required. Attempting to defeat the ends of justice is a nominate crime covering any intentional act that hinders or obstructs the course of justice but does not fit a specific category like perjury.</p><p class="slide-para">⚖ Key Case: HM Advocate v Wade and Coats Unreported, 2007</p><p class="slide-para">The High Court confirmed that &quot;attempting to defeat the ends of justice&quot; encompasses deliberate acts designed to obstruct or hinder police investigations, including cleaning a crime scene with bleach, removing carpets, destroying evidence (physical or biological), and setting fires to prevent arrest. The offence requires intentional conduct — recklessness is insufficient.</p><p class="slide-para">— End of Document —</p></div>
+    </div>
+  </div>
+  <button class="nav-btn" id="prev-btn" aria-label="Previous slide">&#8592;</button>
+  <button class="nav-btn" id="next-btn" aria-label="Next slide">&#8594;</button>
+  <div id="hint">&#8592; &#8594; arrow keys to navigate &nbsp;&middot;&nbsp; G to jump &nbsp;&middot;&nbsp; F for fullscreen</div>
+</div>
+
+<div id="mobile-nav">
+  <button class="mob-btn" id="mob-prev" disabled>
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Prev
+  </button>
+  <span id="mob-counter">1 / 67</span>
+  <button class="mob-btn" id="mob-next">
+    Next
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M5 2L10 7L5 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<div id="notes-bar">
+  <span>Press <kbd style="background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;font-family:monospace">N</kbd> to toggle speaker notes</span>
+</div>
+
+<button id="thumbs-btn" aria-label="Slide thumbnails" title="Slide list">&#9776;</button>
+<div id="thumbs-panel" role="listbox" aria-label="Slide list"></div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('counter');
+  const mobCounter = document.getElementById('mob-counter');
+  const progressBar = document.getElementById('progress-bar');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const mobPrev = document.getElementById('mob-prev');
+  const mobNext = document.getElementById('mob-next');
+  const thumbsBtn = document.getElementById('thumbs-btn');
+  const thumbsPanel = document.getElementById('thumbs-panel');
+  const notesBar = document.getElementById('notes-bar');
+  const total = slides.length;
+  let current = 0;
+  let transitioning = false;
+
+  // Build thumbnail list
+  slides.forEach((slide, i) => {
+    const titleEl = slide.querySelector('.title-main, .slide-title, h1, h2');
+    const label = titleEl ? titleEl.textContent.trim().slice(0, 40) : 'Slide ' + (i + 1);
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb' + (i === 0 ? ' active' : '');
+    thumb.setAttribute('role', 'option');
+    thumb.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    thumb.innerHTML = '<span class="thumb-num">' + (i + 1) + '</span><span class="thumb-title">' + label + '</span>';
+    thumb.addEventListener('click', () => { goTo(i); thumbsPanel.classList.remove('open'); });
+    thumbsPanel.appendChild(thumb);
+  });
+
+  function updateThumbs() {
+    thumbsPanel.querySelectorAll('.thumb').forEach((t, i) => {
+      t.classList.toggle('active', i === current);
+      t.setAttribute('aria-selected', i === current ? 'true' : 'false');
+    });
+    const activeThumb = thumbsPanel.querySelector('.thumb.active');
+    if (activeThumb) activeThumb.scrollIntoView({ block: 'nearest' });
+  }
+
+  function goTo(index, dir) {
+    if (transitioning || index === current) return;
+    if (index < 0 || index >= total) return;
+    transitioning = true;
+
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit-left');
+
+    const incoming = slides[index];
+    incoming.style.transition = 'none';
+    incoming.classList.remove('active', 'exit-left');
+    incoming.style.opacity = '0';
+    incoming.style.transform = dir === 'prev' ? 'translateX(-60px)' : 'translateX(60px)';
+
+    requestAnimationFrame(() => {
+      incoming.style.transition = '';
+      incoming.style.opacity = '1';
+      incoming.style.transform = 'translateX(0)';
+      incoming.classList.add('active');
+
+      setTimeout(() => {
+        slides[current].classList.remove('exit-left');
+        current = index;
+        updateUI();
+        transitioning = false;
+      }, 520);
+    });
+  }
+
+  function updateUI() {
+    counter.textContent = (current + 1) + ' / ' + total;
+    mobCounter.textContent = (current + 1) + ' / ' + total;
+    progressBar.style.width = ((current + 1) / total * 100) + '%';
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    mobPrev.disabled = current === 0;
+    mobNext.disabled = current === total - 1;
+    updateThumbs();
+  }
+
+  function next() { goTo(current + 1, 'next'); }
+  function prev() { goTo(current - 1, 'prev'); }
+
+  // Init first slide
+  slides[0].classList.add('active');
+  slides[0].style.opacity = '1';
+  slides[0].style.transform = 'translateX(0)';
+  updateUI();
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  mobPrev.addEventListener('click', prev);
+  mobNext.addEventListener('click', next);
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    switch (e.key) {
+      case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+        e.preventDefault(); next(); break;
+      case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+        e.preventDefault(); prev(); break;
+      case 'Home': e.preventDefault(); goTo(0, 'prev'); break;
+      case 'End':  e.preventDefault(); goTo(total - 1, 'next'); break;
+      case 'f': case 'F':
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+        else document.exitFullscreen().catch(() => {});
+        break;
+      case 'n': case 'N':
+        notesBar.classList.toggle('open'); break;
+      case 'g': case 'G': {
+        const input = prompt('Go to slide (1-' + total + '):');
+        const num = parseInt(input, 10);
+        if (num >= 1 && num <= total) goTo(num - 1);
+        break;
+      }
+    }
+  });
+
+  // Touch swipe — only fires on horizontal swipes to avoid clashing with bullet scrolling
+  let startX = 0, startY = 0;
+  const vp = document.getElementById('viewport');
+  vp.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  vp.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      dx < 0 ? next() : prev();
+    }
+  }, { passive: true });
+
+  // Thumbnails toggle
+  thumbsBtn.addEventListener('click', () => thumbsPanel.classList.toggle('open'));
+  document.addEventListener('click', e => {
+    if (!thumbsPanel.contains(e.target) && e.target !== thumbsBtn) {
+      thumbsPanel.classList.remove('open');
+    }
+  });
+})();
+</script>
+</body>
+</html>
